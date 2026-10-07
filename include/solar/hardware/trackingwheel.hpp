@@ -10,7 +10,7 @@ namespace solar {
 			);
 			void reset();
 			double getOffset() const;
-			double readDeltaDistance();
+			double readDeltaDistance(); // im not supposed to call this getdeltadistance apparently cuz of fucking naming conventions since its not a const
 			double getDistance() const;
 		private:
 			pros::Rotation _encoder;

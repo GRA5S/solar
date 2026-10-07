@@ -21,7 +21,7 @@ namespace solar {
 		_h_tracking_wheel(hwheel),
 		_wheel_diameter(wheel_diameter) 
 	{
-		// TODO: body here
+		// body go here idk if we need anythin here
 	}
 
 	void Chassis::arcade(std::int32_t throttle, std::int32_t turn) const {
@@ -65,10 +65,10 @@ namespace solar {
 		set_pose(Pose{x, y, current_theta});
 	}
 
-
 	void Chassis::_update() {
 		// TODO: position updating stuff
 	}
+
 	void Chassis::_calibrateIMU(){
 		int attempt = 1;
 		bool calibrated = false;
@@ -89,6 +89,7 @@ namespace solar {
 			return;
 		}
 	}
+	
 	void Chassis::calibrate() {
 		if (_imu.is_installed()) _calibrateIMU();
 		_h_tracking_wheel.reset();
@@ -96,8 +97,4 @@ namespace solar {
 		// rumble to controller to indicate success
 		pros::c::controller_rumble(pros::E_CONTROLLER_MASTER, ".");
 	}
-
-	
-
-
 }

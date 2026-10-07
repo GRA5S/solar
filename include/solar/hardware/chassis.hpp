@@ -40,18 +40,18 @@ namespace solar {
 		private:
 			// drive stuff
 			pros::IMU _imu;
-			TrackingWheel _v_tracking_wheel;
-			TrackingWheel _h_tracking_wheel;
 			pros::MotorGroup _left_motors;
 			pros::MotorGroup _right_motors;
 			double _wheel_diameter;
 
 			// pose stuff
-			Pose _pose{0,0,0};
+			Pose _pose{};
 			mutable pros::Mutex _pose_mutex;
 			void _update();
 
 			// odom stuff
+			TrackingWheel _v_tracking_wheel;
+			TrackingWheel _h_tracking_wheel;
 			double _prev_left_rot = 0.0;
 			double _prev_right_rot = 0.0;
 			std::unique_ptr<pros::Task> _odom_task;
