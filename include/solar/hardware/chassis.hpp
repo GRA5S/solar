@@ -48,12 +48,11 @@ namespace solar {
 			Pose _pose{};
 			mutable pros::Mutex _pose_mutex;
 			void _update();
+			double _prev_imu_rad = 0.0;
 
 			// odom stuff
 			TrackingWheel _v_tracking_wheel;
 			TrackingWheel _h_tracking_wheel;
-			double _prev_left_rot = 0.0;
-			double _prev_right_rot = 0.0;
 			std::unique_ptr<pros::Task> _odom_task;
 			void _calibrateIMU();
 	};
