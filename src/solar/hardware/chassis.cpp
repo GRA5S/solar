@@ -3,6 +3,7 @@
 #include "pros/rtos.hpp"
 #include "trackingwheel.hpp"
 #include <cmath>
+#include <cstdint>
 #include <memory>
 #include <mutex>
 #include <numbers>
@@ -152,7 +153,13 @@ namespace solar {
 		set_pose(0,0,0);
 		if (!_odom_task){
 			_odom_task = std::make_unique<pros::Task>([this] { // the make unique thing keeps it running after calibrate() ends
-				while (true) {_update(); pros::delay(10);}
+			uint32_t prev = pros::millis();
+			while (true) {
+				_update();
+				// basically this just makes sure there is atleast 10ms between updates. mainly just doin this cuz i js realized lemlib does it
+				if (pros::millis() - prev > 10) prev = pros::millis();
+				pros::Task::delay_until(&prev, 10);
+			}
 			});
 		}
 		pros::c::controller_rumble(pros::E_CONTROLLER_MASTER, ".");
