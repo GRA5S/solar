@@ -1,4 +1,5 @@
 #include "solar/hardware/chassis.hpp"
+#include "solar/util.hpp"
 #include "pros/imu.hpp"
 #include "pros/rtos.hpp"
 #include "trackingwheel.hpp"
@@ -80,12 +81,12 @@ namespace solar {
 		double localx, localy;
 		// heading stuff (mostly)
 		double headingdeg = _imu.get_rotation();
-		double headingrad = headingdeg * std::numbers::pi / 180.0;
+		double headingrad = degToRad(headingdeg);
 		if (!std::isfinite(headingdeg)) return;
 		double prevtheta;
 		{
 			std::lock_guard<pros::Mutex> lock(_pose_mutex);
-			prevtheta = _pose.theta * std::numbers::pi / 180.0;
+			prevtheta = degToRad(_pose.theta);
 			prevx = _pose.x;
 			prevy = _pose.y;
 		}
@@ -116,7 +117,7 @@ namespace solar {
 				std::lock_guard<pros::Mutex> lock(_pose_mutex);
 				_pose.x = prevx + dx; 
 				_pose.y = prevy + dy;
-				_pose.theta = (prevtheta + deltatheta) * 180.0 / std::numbers::pi; 
+				_pose.theta = radToDeg(prevtheta + deltatheta); 
 			}
 		};
 
@@ -147,7 +148,7 @@ namespace solar {
 
 	void Chassis::calibrate() {
 		if (_imu.is_installed()) _calibrateIMU();
-		_prev_imu_rad = _imu.get_rotation() * std::numbers::pi / 180.0;
+		_prev_imu_rad = degToRad(_imu.get_rotation());
 		_h_tracking_wheel.reset();
 		_v_tracking_wheel.reset();
 		set_pose(0,0,0);

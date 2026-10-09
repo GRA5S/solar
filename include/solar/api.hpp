@@ -1,3 +1,3 @@
 #pragma once
 
-#include "solar/chassis.hpp"
+#include "solar/hardware/chassis.hpp"
