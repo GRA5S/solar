@@ -22,12 +22,12 @@ namespace solar {
     }
 
     inline double getRadius(double x, double y, double x1, double y1, double angle) {
-        double delta_x = x1 - x;
-        double delta_y = y1 - y;
-        if((2 * delta_y * sin(degToRad(90 - angle))) == 0) {
+        double 𝚫x = x1 - x;
+        double 𝚫y = y1 - y;
+        if((2 * 𝚫y * sin(degToRad(90 - angle))) == 0) {
             return 999;
         }
-        return (delta_x * delta_x + delta_y * delta_y) / (2 * delta_y * sin(degToRad(90 - angle)));
+        return (𝚫x * 𝚫x + 𝚫y * 𝚫y) / (2 * 𝚫y * sin(degToRad(90 - angle)));
     }
 
     inline double normalizeAngle(double angle) {

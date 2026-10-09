@@ -73,8 +73,8 @@ namespace solar {
 	void Chassis::_update() {
 		
 		// tracking wheel stuff
-		double deltax = _h_tracking_wheel.readDeltaDistance();
-		double deltay = _v_tracking_wheel.readDeltaDistance();
+		double 𝚫x = _h_tracking_wheel.readDeltaDistance();
+		double 𝚫y = _v_tracking_wheel.readDeltaDistance();
 		double xoffset = _h_tracking_wheel.getOffset();
 		double yoffset = _v_tracking_wheel.getOffset();
 		double prevx, prevy;
@@ -90,13 +90,13 @@ namespace solar {
 			prevx = _pose.x;
 			prevy = _pose.y;
 		}
-		double deltatheta = headingrad - _prev_imu_rad;
+		double 𝚫theta = headingrad - _prev_imu_rad;
 		_prev_imu_rad = headingrad;
-		double avgtheta = prevtheta + deltatheta / 2.0;
+		double avgtheta = prevtheta + 𝚫theta / 2.0;
 
 		// icl i havent read the math too hard i just skimmed it but i implemented this according to the 5225a paper and it seems to be the same as lemlibs sooooo
 		const auto localposition = [&] {
-			if (deltatheta < 1e-9) {localx = deltax; localy = deltay;} // <1e-9 is basically just checking if its zero cuz floats and doubles are weird
+			if (𝚫theta < 1e-9) {localx = 𝚫x; localy = 𝚫y;} // <1e-9 is basically just checking if its zero cuz floats and doubles are weird
 			else {
 				/*
 				chord length is L=2r*sin(θ/2)
@@ -104,8 +104,8 @@ namespace solar {
 				arc length is s=rθ
 				therefore s/θ = r (s represents 𝚫x)
 				*/
-				localx = 2 * (deltax / deltatheta + xoffset) * std::sin(deltatheta / 2.0);
-				localy = 2 * (deltay / deltatheta + yoffset) * std::sin(deltatheta / 2.0);
+				localx = 2 * (𝚫x / 𝚫theta + xoffset) * std::sin(𝚫theta / 2.0);
+				localy = 2 * (𝚫y / 𝚫theta + yoffset) * std::sin(𝚫theta / 2.0);
 			}
 			/*
 			lowk i dont get this part but it translates the position relative to the robot into one relative to the feild
@@ -117,7 +117,7 @@ namespace solar {
 				std::lock_guard<pros::Mutex> lock(_pose_mutex);
 				_pose.x = prevx + dx; 
 				_pose.y = prevy + dy;
-				_pose.theta = radToDeg(prevtheta + deltatheta); 
+				_pose.theta = radToDeg(prevtheta + 𝚫theta); 
 			}
 		};
 
