@@ -1,4 +1,4 @@
-#include "solar/pid.hpp"
+#include "solar/motions/pid.hpp"
 #include "pros/rtos.hpp"
 #include "solar/util.hpp"
 #include <algorithm>
@@ -15,9 +15,7 @@ namespace solar {
     ):
         _kp(kp),
         _ki(ki),
-        _kd(kd)
-    {
-    }
+        _kd(kd) {}
     void PID::setCoefficients(double kp, double ki, double kd) {_kp = kp; _ki = ki; _kd = kd;}
     void PID::setTarget(double target) {_target = target; reset();}
     void PID::setIntegralMax(double integral_max) {_integral_max = integral_max;}
