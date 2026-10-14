@@ -7,7 +7,6 @@
 #include <cstdint>
 #include <memory>
 #include <mutex>
-#include <numbers>
 
 namespace solar {
 
