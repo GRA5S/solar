@@ -20,7 +20,12 @@ namespace solar {
     inline double radToDeg(double rad) {
         return (rad * 180 / std::numbers::pi);
     }
-
+    inline int sign(double input) {
+        return (input > 0) ? 1 : ((input < 0) ? -1 : 0); // i used 2 ternary operators instead of just doing if elseif else cuz i hate my life
+    }
+    inline int sign(int input) {
+        return (input > 0) ? 1 : ((input < 0) ? -1 : 0); // i used 2 ternary operators instead of just doing if elseif else cuz i hate my life
+    }
     inline double getRadius(double x, double y, double x1, double y1, double angle) {
         double 𝚫x = x1 - x;
         double 𝚫y = y1 - y;
