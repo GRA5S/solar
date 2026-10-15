@@ -27,12 +27,12 @@ namespace solar {
         return (input > 0) ? 1 : ((input < 0) ? -1 : 0); // i used 2 ternary operators instead of just doing if elseif else cuz i hate my life
     }
     inline double getRadius(double x, double y, double x1, double y1, double angle) {
-        double 𝚫x = x1 - x;
-        double 𝚫y = y1 - y;
-        if((2 * 𝚫y * sin(degToRad(90 - angle))) == 0) {
+        double deltax = x1 - x;
+        double deltay = y1 - y;
+        if((2 * deltay * sin(degToRad(90 - angle))) == 0) {
             return 999;
         }
-        return (𝚫x * 𝚫x + 𝚫y * 𝚫y) / (2 * 𝚫y * sin(degToRad(90 - angle)));
+        return (deltax * deltax + deltay * deltay) / (2 * deltay * sin(degToRad(90 - angle)));
     }
 
     inline double normalizeAngle(double angle) {

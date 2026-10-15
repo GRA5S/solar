@@ -16,9 +16,9 @@ namespace solar {
     }
     double TrackingWheel::readDeltaDistance() {
         double current = getDistance();
-        double 𝚫 = current - _last_distance;
+        double delta = current - _last_distance;
         _last_distance = current;
-        return 𝚫;
+        return delta;
     }
     double TrackingWheel::getOffset() const {
         return _offset;
