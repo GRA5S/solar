@@ -2,6 +2,7 @@
 #include "pros/rtos.hpp"
 #include "solar/util.hpp"
 #include <algorithm>
+#include <array>
 #include <cstdint>
 #include <cstdlib>
 #include <optional>
@@ -11,21 +12,27 @@ namespace solar {
     PID::PID(
         double kp,
         double ki,
-        double kd
+        double kd,
+        double target
     ):
         _kp(kp),
         _ki(ki),
-        _kd(kd) {}
+        _kd(kd),
+        _target(target) 
+    {}
+    std::array<double, 3> PID::getCoefficients() {return {_kp, _ki, _kd};}
     void PID::setCoefficients(double kp, double ki, double kd) {_kp = kp; _ki = ki; _kd = kd;}
-    void PID::setTarget(double target) {_target = target; reset();}
+    void PID::setkp(double kp) {_kp = kp;}
+    void PID::setki(double ki) {_ki = ki;}
+    void PID::setkd(double kd) {_kd = kd;}
+    double PID::getkp() {return _kp;}
+    double PID::getki() {return _ki;}
+    double PID::getkd() {return _kd;}
     void PID::setIntegralMax(double integral_max) {_integral_max = integral_max;}
-    void PID::setErrorTolerance(double small_error_tolerence, double big_error_tolerence) {_small_error_tolerance = small_error_tolerence; _big_error_tolerance = big_error_tolerence;}
-    void PID::setErrorDuration(double small_error_duration, double big_error_duration) {_small_error_duration = small_error_duration; _big_error_duration = big_error_duration;}
-    void PID::setDerivativeTolerance(double derivitive_tolerence) {_derivative_tolerance = derivitive_tolerence;}
+    // there is both reset and clear sum error because sometimes u js want to get rid of the sum error if I be doing too much but you arent resetting everything yk
     void PID::clearSumError() {_sum_error = 0;}
-    void PID::reset() {clearSumError(); _previous_error = 0; _previous_time = std::nullopt;}
-    void PID::setArrive(bool arrive) {_arrive = arrive;}
-    bool PID::targetArrived() {return _arrived;}
+    void PID::reset() {_sum_error = 0; _previous_error = 0; _previous_time = std::nullopt;}
+    void PID::setTarget(double target) {_target = target; reset();}
     double PID::getI() {return _integral;}
     double PID::getOutput() {return _output;}
     double PID::update(double input){
@@ -34,28 +41,28 @@ namespace solar {
         const uint32_t dt = (_previous_time == std::nullopt) ? 0 : (now - *_previous_time); // this is a ternary operator, if previous time is null then set to 0. if u made it an if else then dt would fall out of scope
         _previous_time = now;
         // error stuff
-        _current_error = _target - input;
-        _sum_error += _current_error * dt / 1000; // idk why its in s instead of ms thats just what lemlib does and i want the pid values to be interchangeable betwwen     
+        _error = _target - input;
+        _sum_error += _error * dt / 1000; // idk if it has to be in s instead of ms thats just what lemlib does and i want the pid values to be interchangeable betwwen     
         _sum_error = std::clamp(_sum_error, -_integral_max, _integral_max);
-        const double derror = _current_error - _previous_error;
+        const double derror = _error - _previous_error;
         // if sign flips and flag is true then reset sum error
         if (
-            sign(_current_error) != 
+            sign(_error) != 
             sign(_previous_error) && 
             _sign_flip_integral_reset
         ) { clearSumError(); }
         // if outside of integral range then set sum error to zero
         if (
-            fabs(_current_error) > // float absolute value
+            fabs(_error) > // float absolute value
             _integral_range &&
             _integral_range != 0
         ) { clearSumError(); } 
         // pid stuff
-        _proportional = _kp * _current_error;
+        _proportional = _kp * _error;
         _integral = _ki * _sum_error;
         _derivative = _kd * ((dt != 0) ? (derror/(dt/1000.0)) : 0);
         _output = _proportional + _integral + _derivative;
-        _previous_error = _current_error;
+        _previous_error = _error;
         return _output;
     }
 }

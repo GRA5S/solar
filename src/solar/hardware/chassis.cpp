@@ -93,32 +93,31 @@ namespace solar {
 		_prev_imu_rad = headingrad;
 		double avgtheta = prevtheta + deltatheta / 2.0;
 
-		// icl i havent read the math too hard i just skimmed it but i implemented this according to the 5225a paper and it seems to be the same as lemlibs sooooo
-		const auto localposition = [&] {
-			if (deltatheta < 1e-9) {localx = deltax; localy = deltay;} // <1e-9 is basically just checking if its zero cuz floats and doubles are weird
-			else {
-				/*
-				chord length is L=2r*sin(θ/2)
-
-				arc length is s=rθ
-				therefore s/θ = r (s represents deltax)
-				*/
-				localx = 2 * (deltax / deltatheta + xoffset) * std::sin(deltatheta / 2.0);
-				localy = 2 * (deltay / deltatheta + yoffset) * std::sin(deltatheta / 2.0);
-			}
+		// icl i havent read the math too hard i just skimmed it but i implemented the following according to the 5225a paper and it seems to be the same as lemlibs sooooo
+		
+		if (fabs(deltatheta) < 1e-9) {localx = deltax; localy = deltay;} // <1e-9 is basically just checking if its zero cuz floats and doubles are weird
+		else {
 			/*
-			lowk i dont get this part but it translates the position relative to the robot into one relative to the feild
-			i could figure it out but ehhh it seems right and unless something gets fucked up ima leave it
+			chord length is L=2r*sin(θ/2)
+
+			arc length is s=rθ
+			therefore s/θ = r (s represents deltax)
 			*/
-			double dx = localy*std::sin(avgtheta) - localx*std::cos(avgtheta);
-			double dy = localy*std::cos(avgtheta) + localx*std::sin(avgtheta);
-			{ 
-				std::lock_guard<pros::Mutex> lock(_pose_mutex);
-				_pose.x = prevx + dx; 
-				_pose.y = prevy + dy;
-				_pose.theta = radToDeg(prevtheta + deltatheta); 
-			}
-		};
+			localx = 2 * (deltax / deltatheta + xoffset) * std::sin(deltatheta / 2.0);
+			localy = 2 * (deltay / deltatheta + yoffset) * std::sin(deltatheta / 2.0);
+		}
+		/*
+		lowk i dont get this part but it translates the position relative to the robot into one relative to the feild
+		i could figure it out but ehhh it seems right and unless something gets fucked up ima leave it
+		*/
+		double dx = localy*std::sin(avgtheta) - localx*std::cos(avgtheta);
+		double dy = localy*std::cos(avgtheta) + localx*std::sin(avgtheta);
+		{ 
+			std::lock_guard<pros::Mutex> lock(_pose_mutex);
+			_pose.x = prevx + dx; 
+			_pose.y = prevy + dy;
+			_pose.theta = radToDeg(prevtheta + deltatheta); 
+		}
 
 
 
