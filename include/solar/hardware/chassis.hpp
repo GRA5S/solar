@@ -6,8 +6,8 @@
 #include "pros/motor_group.hpp"
 #include "pros/rtos.hpp"
 #include "trackingwheel.hpp"
+#include "solar/motions/pid.hpp"
 namespace solar {
-
 	struct Pose {
 		double x = 0.0;
 		double y = 0.0;
@@ -22,7 +22,9 @@ namespace solar {
 				pros::Imu imu,
 				TrackingWheel v_tracking_wheel,
 				TrackingWheel h_tracking_wheel,
-				double wheel_diameter = 3.25
+				double wheel_diameter,
+				ControllerSettings linear_controller,
+				ControllerSettings angular_controller
 			);
 			void calibrate();
 
@@ -55,6 +57,10 @@ namespace solar {
 			TrackingWheel _h_tracking_wheel;
 			std::unique_ptr<pros::Task> _odom_task;
 			void _calibrateIMU();
+
+			// controller settings
+			ControllerSettings _linear_controller;
+			ControllerSettings _angular_controller;
 	};
 
 }

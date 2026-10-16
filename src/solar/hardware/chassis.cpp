@@ -7,6 +7,7 @@
 #include <cstdint>
 #include <memory>
 #include <mutex>
+#include <cstdio>
 
 namespace solar {
 
@@ -16,14 +17,18 @@ namespace solar {
 		pros::Imu imu,
 		TrackingWheel vwheel,
 		TrackingWheel hwheel,
-		double wheel_diameter
+		double wheel_diameter,
+		ControllerSettings linear_controller,
+		ControllerSettings angular_controller
 	): 
 		_left_motors(left_ports),
 		_right_motors(right_ports),
 		_imu(imu),
 		_v_tracking_wheel(vwheel),
 		_h_tracking_wheel(hwheel),
-		_wheel_diameter(wheel_diameter) 
+		_wheel_diameter(wheel_diameter),
+		_linear_controller(linear_controller),
+		_angular_controller(angular_controller)
 	{
 		// body go here idk if we need anythin here
 	}

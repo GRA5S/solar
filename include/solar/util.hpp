@@ -1,6 +1,7 @@
 #pragma once
 #include <vector>
 #include <cmath>
+#include <numbers>
 
 namespace solar {
     inline double average(const std::vector<double>& values) {
