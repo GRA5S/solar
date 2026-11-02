@@ -1,9 +1,9 @@
-#include "solar/motions/motion.hpp"
+#include "solar/motions/exitconditions.hpp"
 #include "pros/rtos.hpp"
 #include <cmath>
-#include <cstdint>
 #include <cstdlib>
 namespace solar {
+    // exit conditions stuff
     ExitCondition::ExitCondition(
         double range, 
         uint32_t timeout
@@ -23,5 +23,8 @@ namespace solar {
     void ExitCondition::reset(){
         _arrived = false;
         _start_time.reset();
+    }
+    bool ExitCondition::getExit(){
+        return _arrived;
     }
 }

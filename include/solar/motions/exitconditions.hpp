@@ -6,6 +6,7 @@ namespace solar {
         public:
             ExitCondition(double range, uint32_t timeout);
             bool update(double error);
+            bool getExit();
             void reset();
         private:
             std::optional<uint32_t> _start_time;
