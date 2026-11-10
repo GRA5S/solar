@@ -1,4 +1,4 @@
-#include "solar/motions/exitconditions.hpp"
+#include "solar/auto/exitconditions.hpp"
 #include "pros/rtos.hpp"
 #include <cmath>
 #include <cstdlib>

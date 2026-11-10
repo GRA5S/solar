@@ -9,3 +9,4 @@ im realizing that i should make a todo cuz every time i come back to this i get 
 - api
 - init shit
 - more stuff in hardware/. maybe intake?, lift?, dsr?, toggle? idk
+- make snesors be pointers or references or smth idk

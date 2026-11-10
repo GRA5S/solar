@@ -34,7 +34,7 @@ namespace solar {
     };
     class PID {
         public:
-            PID(double kp, double ki, double kd, double target);
+            PID(double kp, double ki, double kd);
             std::array<double, 3> getCoefficients();
             void setCoefficients(double kp, double ki, double kd);
             void setTarget(double target);
@@ -63,7 +63,7 @@ namespace solar {
             
         protected:
             std::optional<std::uint32_t> _previous_time = std::nullopt;
-            double _target;
+            std::optional<double> _target = std::nullopt;
 
             // coefficients and things
             double _kp, _ki, _kd;

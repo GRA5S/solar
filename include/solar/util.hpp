@@ -14,6 +14,7 @@ namespace solar {
         }
         return sum / values.size();
     }
+    
     inline double degToRad(double deg) {
         return (deg * std::numbers::pi / 180);
     }

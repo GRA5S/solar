@@ -1,4 +1,4 @@
-#include "solar/motions/pid.hpp"
+#include "solar/auto/pid.hpp"
 #include "pros/rtos.hpp"
 #include "solar/util.hpp"
 #include <algorithm>
@@ -12,13 +12,11 @@ namespace solar {
     PID::PID(
         double kp,
         double ki,
-        double kd,
-        double target
+        double kd
     ):
         _kp(kp),
         _ki(ki),
-        _kd(kd),
-        _target(target) 
+        _kd(kd)
     {}
     std::array<double, 3> PID::getCoefficients() {return {_kp, _ki, _kd};}
     void PID::setCoefficients(double kp, double ki, double kd) {_kp = kp; _ki = ki; _kd = kd;}
@@ -39,12 +37,13 @@ namespace solar {
     double PID::getI() {return _integral;}
     double PID::getOutput() {return _output;}
     double PID::update(double input){
+        if (!_target) return 0; 
         // time stuff
         const uint32_t now = pros::millis();
         const uint32_t dt = (_previous_time == std::nullopt) ? 0 : (now - *_previous_time); // this is a ternary operator, if previous time is null then set to 0. if u made it an if else then dt would fall out of scope
         _previous_time = now;
         // error stuff
-        _error = _target - input;
+        _error = _target.value() - input; // .value becuase optional
         _sum_error += _error * dt / 1000; // idk if it has to be in s instead of ms thats just what lemlib does and i want the pid values to be interchangeable betwwen     
         _sum_error = std::clamp(_sum_error, -_integral_max, _integral_max);
         const double derror = _error - _previous_error;

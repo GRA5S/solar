@@ -1,4 +1,4 @@
-#include "solar/localization/trackingwheel.hpp"
+#include "solar/hardware/trackingwheel.hpp"
 #include <numbers>
 
 namespace solar {
