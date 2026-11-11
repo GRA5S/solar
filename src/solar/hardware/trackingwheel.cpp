@@ -3,7 +3,7 @@
 
 namespace solar {
     TrackingWheel::TrackingWheel(
-        pros::Rotation encoder,
+        pros::Rotation* encoder,
         double diameter,
         double offset
     ):
@@ -23,10 +23,10 @@ namespace solar {
         return _offset;
     }
     void TrackingWheel::reset() {
-        _encoder.reset_position();
+        _encoder->reset_position();
         _last_distance = 0;
     }
     double TrackingWheel::getDistance() const{
-        return _encoder.get_position() /100.0 / 360.0 * std::numbers::pi * _diameter;
+        return _encoder->get_position() /100.0 / 360.0 * std::numbers::pi * _diameter;
     }
 }

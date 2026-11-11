@@ -5,11 +5,11 @@ namespace solar {
     class Lift{
         public:
             Lift(
-                pros::MotorGroup motors,
+                pros::MotorGroup* motors,
                 ControllerSettings lift_controller
             );
             ControllerSettings lift_controller;
-            pros::MotorGroup motors;
+            pros::MotorGroup* motors;
             
     };
 }

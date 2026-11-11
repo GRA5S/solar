@@ -6,8 +6,8 @@ namespace solar {
     class Drivetrain{
         public:
             Drivetrain(
-                pros::MotorGroup& left_ports,
-                pros::MotorGroup& right_ports,
+                pros::MotorGroup* left_ports,
+                pros::MotorGroup* right_ports,
                 double wheel_diameter
             );
             void move_raw(int left, int right) const; // lowk kinda useless cuz the other ones dont even have drive curves atm so this is jsut the same thing as tank
@@ -17,8 +17,8 @@ namespace solar {
             void set_brake_mode(pros::motor_brake_mode_e_t mode) const;
         private:
             // hardware
-			pros::MotorGroup& _left_motors;
-			pros::MotorGroup& _right_motors;
+			pros::MotorGroup* _left_motors;
+			pros::MotorGroup* _right_motors;
 			double _wheel_diameter;
 
     };

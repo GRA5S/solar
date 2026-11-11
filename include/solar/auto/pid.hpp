@@ -3,34 +3,17 @@
 #include <cstdint>
 #include <optional>
 namespace solar {
-    class ControllerSettings {
-        public:
-            ControllerSettings(
-                std::array<double, 3> constants, 
-                double windupRange, 
-                double smallError, 
-                double smallErrorTimeout, 
-                double largeError, 
-                double largeErrorTimeout, 
-                double slew
-            ): 
-                _constants(constants),
-                _windupRange(windupRange),
-                _smallError(smallError),
-                _smallErrorTimeout(smallErrorTimeout),
-                _largeError(largeError),
-                _largeErrorTimeout(largeErrorTimeout),
-                _slew(slew) 
-            {}
-
-            double _windupRange;
-            double _smallError;
-            double _smallErrorTimeout;
-            double _largeError;
-            double _largeErrorTimeout;
-            double _slew;
-            std::array<double, 3> _constants;
-            
+    struct ControllerSettings {
+        std::optional<double> kp = std::nullopt;
+        std::optional<double> ki = std::nullopt;
+        std::optional<double> kd = std::nullopt;
+        std::optional<double> integral_range = std::nullopt;
+        std::optional<double> integral_max = std::nullopt;
+        std::optional<double> small_error = std::nullopt;
+        std::optional<double> small_error_timeout = std::nullopt;
+        std::optional<double> large_error = std::nullopt;
+        std::optional<double> large_error_timeout = std::nullopt;
+        std::optional<double> slew = std::nullopt;
     };
     class PID {
         public:

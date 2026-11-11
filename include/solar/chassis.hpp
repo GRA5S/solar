@@ -1,23 +1,23 @@
 #pragma once
-#include "solar/hardware/odomsensors.hpp"
+#include "solar/hardware/sensors.hpp"
 #include "solar/auto/pid.hpp"
 #include "solar/hardware/drivetrain.hpp"
 #include <memory>
-enum DriveSide {
-	LEFT,
-	RIGHT
-};
-struct Pose {
-	double x = 0.0;
-	double y = 0.0;
-	double theta = 0.0;
-};
 namespace solar {
+	enum DriveSide {
+		LEFT,
+		RIGHT
+	};
+	struct Pose {
+		double x = 0.0;
+		double y = 0.0;
+		double theta = 0.0;
+	};
 	class Chassis{
 		public:
 			Chassis(
 				Drivetrain drivetrain,
-				OdomSensors sensors,
+				Sensors& sensors,
 				ControllerSettings linear_controller,
 				ControllerSettings angular_controller
 			);
@@ -41,14 +41,15 @@ namespace solar {
 			void set_pose(Pose);
 			void set_pose(double x, double y, double theta);
 			void set_pose(double x, double y);
-			void calibrate();
+
+			void init();
 
 		private:
 			// hardware
 			Drivetrain _drivetrain;
-			OdomSensors _odom_sensors;
+			Sensors& _sensors;
 
-			// motion stuff
+			// motion stuff 
 			void _requestMotionstart();
 			void _endMotion();
 			bool _motion_running = false;
