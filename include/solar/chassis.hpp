@@ -1,8 +1,12 @@
 #pragma once
+#include "pros/rtos.hpp"
 #include "solar/hardware/sensors.hpp"
 #include "solar/auto/pid.hpp"
 #include "solar/hardware/drivetrain.hpp"
+#include <functional>
 #include <memory>
+#include <optional>
+#include <queue>
 namespace solar {
 	enum DriveSide {
 		LEFT,
@@ -32,7 +36,7 @@ namespace solar {
             void turnToPoint(double x, double y, int timeout);
             void turnToHeading(double theta, int timeout);
             void swingToHeading(double theta, DriveSide lockedside, int timeout);
-            void swingToPoint(double x, double y, int timeout);
+            void swingToPoint(double x, double y, DriveSide lockedside, int timeout);
             void moveToPose(double x, double y, double theta, int timeout);
             void moveToPoint(double x, double y, int timeout);
 
@@ -50,11 +54,13 @@ namespace solar {
 			Sensors& _sensors;
 
 			// motion stuff 
-			void _requestMotionstart();
-			void _endMotion();
+			std::queue<std::function<void()>> _motion_queue;
+			mutable pros::Mutex _motion_mutex;
+			std::unique_ptr<pros::Task> _motion_task;
+			std::optional<double> _motion_progress = std::nullopt;
 			bool _motion_running = false;
-			bool _motion_queued = false;
-			double _dist_travelled = 0;
+			void _newMotion(std::function<void()> motion);
+			void _motionLoop();
 			ControllerSettings _linear_controller;
 			ControllerSettings _angular_controller;
 

@@ -9,6 +9,7 @@ namespace solar {
         std::optional<double> kd = std::nullopt;
         std::optional<double> integral_range = std::nullopt;
         std::optional<double> integral_max = std::nullopt;
+        bool reset_integral_on_sign_flip = false;
         std::optional<double> small_error = std::nullopt;
         std::optional<double> small_error_timeout = std::nullopt;
         std::optional<double> large_error = std::nullopt;
@@ -36,6 +37,7 @@ namespace solar {
             */
             void setIntegralMax(double integral_max);
             void setIntegralRange(double integral_range);
+            void setIntegralResetOnSignFlip(bool reset_on_sign_flip);
             double getI();
 
             void clearSumError(); // sum error for integral
@@ -44,7 +46,7 @@ namespace solar {
             double update(double input); // calculate output 
             double getOutput();
             
-        protected:
+        private:
             std::optional<std::uint32_t> _previous_time = std::nullopt;
             std::optional<double> _target = std::nullopt;
 

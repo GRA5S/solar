@@ -1,10 +1,11 @@
 #include "solar/chassis.hpp"
+#include "pros/rtos.hpp"
 #include "solar/hardware/sensors.hpp"
+#include "util.hpp"
 #include <cmath>
 #include <cstdio>
 
 namespace solar {
-
 	Chassis::Chassis(
 		Drivetrain drivetrain,
 		Sensors& sensors,
@@ -18,5 +19,26 @@ namespace solar {
 		
 	{
 		// body go here idk if we need anythin here
+	}
+	void Chassis::init() {
+		_sensors.calibrate();
+		_prev_imu_rad = degToRad(_sensors.imu.get_rotation());
+		set_pose(0,0,0);
+		if (!_odom_task){
+			_odom_task = std::make_unique<pros::Task>([this] { // the make unique thing keeps it running after calibrate() ends
+				uint32_t prev = pros::millis();
+				while (true) {
+					_update();
+					// basically this just makes sure there is atleast 10ms between updates. mainly just doin this cuz i js realized lemlib does it
+					if (pros::millis() - prev > 10) prev = pros::millis();
+					pros::Task::delay_until(&prev, 10);
+				}
+			});
+		}
+		if (!_motion_task){
+			_motion_task = std::make_unique<pros::Task>([this]{
+				_motionLoop();
+			});
+		}
 	}
 }
