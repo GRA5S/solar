@@ -43,4 +43,10 @@ namespace solar {
         return angle;
     }
 
+    inline double slew(double target, double prev, double max_change) {
+        if (target - prev > max_change) return prev + max_change;
+        if (prev - target > max_change) return prev - max_change;
+        return target;
+    }
+
 }
