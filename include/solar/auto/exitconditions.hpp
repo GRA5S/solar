@@ -4,14 +4,14 @@
 namespace solar {
     class ExitCondition{
         public:
-            ExitCondition(double range, uint32_t timeout);
+            ExitCondition(std::optional<double> range, std::optional<uint32_t> timeout);
             bool update(double error);
             bool getExit();
             void reset();
         private:
             std::optional<uint32_t> _start_time;
             bool _arrived = false;
-            double _range;
-            uint32_t _timeout;
+            std::optional<double> _range;
+            std::optional<uint32_t> _timeout;
     }; 
 }
