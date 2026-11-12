@@ -1,5 +1,4 @@
 #pragma once
-#include <array>
 #include <cstdint>
 #include <optional>
 namespace solar {
@@ -7,6 +6,12 @@ namespace solar {
         std::optional<double> kp = std::nullopt;
         std::optional<double> ki = std::nullopt;
         std::optional<double> kd = std::nullopt;
+        /*
+            integral stuff
+            max is the max that integral can accumulate to
+            range is the p range where integral applies
+            so if the proportional term is not within ±(integral range) then integral term does not apply
+        */
         std::optional<double> integral_range = std::nullopt;
         std::optional<double> integral_max = std::nullopt;
         bool reset_integral_on_sign_flip = false;
@@ -18,27 +23,11 @@ namespace solar {
     };
     class PID {
         public:
-            PID(double kp, double ki, double kd);
-            std::array<double, 3> getCoefficients();
-            void setCoefficients(double kp, double ki, double kd);
+            PID(ControllerSettings& settings);
+
             void setTarget(double target);
-            double getkp();
-            double getki();
-            double getkd();
-            void setkp(double);
-            void setki(double);
-            void setkd(double);
-            /*
-            integral stuff
-            max is the max that integral can accumulate to
-            range is the p range where integral applies
-            so if the proportional term is not within ±(integral range) then integral term does not apply
-            also getI is NOT the same as getki >:(
-            */
-            void setIntegralMax(double integral_max);
-            void setIntegralRange(double integral_range);
-            void setIntegralResetOnSignFlip(bool reset_on_sign_flip);
-            double getI();
+
+            double getI(); // ts not for getting ki btw its i
 
             void clearSumError(); // sum error for integral
             void reset();
@@ -47,18 +36,13 @@ namespace solar {
             double getOutput();
             
         private:
+            ControllerSettings& _settings;
+
             std::optional<std::uint32_t> _previous_time = std::nullopt;
             std::optional<double> _target = std::nullopt;
-
-            // coefficients and things
-            double _kp, _ki, _kd;
-            std::optional<double> _integral_range = std::nullopt;
-            double _integral_max = 500;
-            bool _sign_flip_integral_reset = false; // idc if this name is long and wordy
-
             // error and output stuff
-            double _error, _previous_error = 0, _sum_error = 0;
-            double _proportional, _integral, _derivative;
-            double _output;
+            double _error = 0, _previous_error = 0, _sum_error = 0;
+            double _proportional = 0, _integral = 0, _derivative = 0;
+            double _output = 0;
     };
 }

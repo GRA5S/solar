@@ -33,18 +33,20 @@ solar::Sensors sensors(
 	)
 );
 
+solar::ControllerSettings linear_settings{
+    .kp = 8,
+    .kd = 58
+};
+solar::ControllerSettings angular_settings{
+    .kp = 2,
+    .kd = 13.875
+};
 
 solar::Chassis chassis(
 	drivetrain,
 	sensors,
-	{
-		.kp = 8,
-		.kd = 58
-	},
-	{
-		.kp = 2,
-		.kd = 13.875
-	}
+	linear_settings,
+	angular_settings
 );
 
 void initialize() {

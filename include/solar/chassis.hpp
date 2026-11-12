@@ -22,8 +22,8 @@ namespace solar {
 			Chassis(
 				Drivetrain drivetrain,
 				Sensors& sensors,
-				ControllerSettings linear_controller,
-				ControllerSettings angular_controller
+				ControllerSettings& linear_controller,
+				ControllerSettings& angular_controller
 			);
 			// motion stuff
             void waitUntil(double dist);
@@ -61,8 +61,12 @@ namespace solar {
 			bool _motion_running = false;
 			void _newMotion(std::function<void()> motion);
 			void _motionLoop();
-			ControllerSettings _linear_controller;
-			ControllerSettings _angular_controller;
+
+			// pid controller stuff
+			ControllerSettings& _linear_controller;
+			ControllerSettings& _angular_controller;
+			PID _linear_pid;
+			PID _angular_pid;
 
 			// tracking stuff
 			Pose _pose{};

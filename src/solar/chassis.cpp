@@ -9,17 +9,16 @@ namespace solar {
 	Chassis::Chassis(
 		Drivetrain drivetrain,
 		Sensors& sensors,
-		ControllerSettings linear_controller,
-		ControllerSettings angular_controller
+		ControllerSettings& linear_controller,
+		ControllerSettings& angular_controller
 	): 
 		_drivetrain(drivetrain),
 		_sensors(sensors),
 		_linear_controller(linear_controller),
-		_angular_controller(angular_controller)
-		
-	{
-		// body go here idk if we need anythin here
-	}
+		_angular_controller(angular_controller),
+		_linear_pid(_linear_controller),
+		_angular_pid(_angular_controller) // make sure to reference the actual member instead of the thingy passed to the constructer because that would go out of scope as soon as the constructor finishes	
+	{ }
 	void Chassis::init() {
 		_sensors.calibrate();
 		_prev_imu_rad = degToRad(_sensors.imu.get_rotation());

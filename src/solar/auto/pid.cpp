@@ -2,34 +2,15 @@
 #include "pros/rtos.hpp"
 #include "solar/util.hpp"
 #include <algorithm>
-#include <array>
 #include <cstdint>
 #include <cstdlib>
 #include <optional>
 #include <sys/types.h>
 #include <cmath>
 namespace solar {
-    PID::PID(
-        double kp,
-        double ki,
-        double kd
-    ):
-        _kp(kp),
-        _ki(ki),
-        _kd(kd)
-    {}
-    std::array<double, 3> PID::getCoefficients() {return {_kp, _ki, _kd};}
-    void PID::setCoefficients(double kp, double ki, double kd) {_kp = kp; _ki = ki; _kd = kd;}
-    void PID::setkp(double kp) {_kp = kp;}
-    void PID::setki(double ki) {_ki = ki;}
-    void PID::setkd(double kd) {_kd = kd;}
-    double PID::getkp() {return _kp;}
-    double PID::getki() {return _ki;}
-    double PID::getkd() {return _kd;}
+    PID::PID(ControllerSettings& settings) : _settings(settings) {}
     // integral range is range of error where integral applies
     // integral max is the max that the _integral can get to
-    void PID::setIntegralMax(double integral_max) {_integral_max = integral_max;}
-    void PID::setIntegralRange(double integral_range) {_integral_range = integral_range;}
     // there is both reset and clear sum error because sometimes u js want to get rid of the sum error if I be doing too much but you arent resetting everything yk
     void PID::clearSumError() {_sum_error = 0;}
     void PID::reset() {_sum_error = 0; _previous_error = 0; _previous_time = std::nullopt;}
@@ -45,23 +26,29 @@ namespace solar {
         // error stuff
         _error = _target.value() - input; // .value becuase optional
         _sum_error += _error * dt / 1000; // idk if it has to be in s instead of ms thats just what lemlib does and i want the pid values to be interchangeable betwwen     
-        _sum_error = std::clamp(_sum_error, -_integral_max, _integral_max);
+        if (_settings.integral_max){
+            _sum_error = std::clamp(
+                _sum_error, 
+                -_settings.integral_max.value(), 
+                _settings.integral_max.value()
+            );
+        }
         const double derror = _error - _previous_error;
         // if sign flips and flag is true then reset sum error
         if (
             sign(_error) != 
             sign(_previous_error) && 
-            _sign_flip_integral_reset
+            _settings.reset_integral_on_sign_flip
         ) { clearSumError(); }
         // if outside of integral range then set sum error to zero
         if (
-            _integral_range &&
-            fabs(_error) > _integral_range // float absolute value
+            _settings.integral_range &&
+            fabs(_error) > _settings.integral_range.value() // float absolute value
         ) { clearSumError(); } 
         // pid stuff
-        _proportional = _kp * _error;
-        _integral = _ki * _sum_error;
-        _derivative = _kd * ((dt != 0) ? (derror/(dt/1000.0)) : 0);
+        _proportional = _settings.kp ? _settings.kp.value() * _error : 0.0;
+        _integral = _settings.ki ? _settings.ki.value() * _sum_error : 0.0;
+        _derivative = _settings.kd ? _settings.kd.value() * ((dt != 0) ? (derror/(dt/1000.0)) : 0) : 0.0;
         _output = _proportional + _integral + _derivative;
         _previous_error = _error;
         return _output;
