@@ -7,7 +7,7 @@ namespace solar {
     // exit conditions stuff
     ExitCondition::ExitCondition(
         std::optional<double> range, 
-        std::optional<uint32_t> timeout
+        std::optional<double> timeout
     ):
         _range(range),
         _timeout(timeout) {}
