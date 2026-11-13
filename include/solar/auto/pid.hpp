@@ -25,23 +25,20 @@ namespace solar {
         public:
             PID(ControllerSettings& settings);
 
-            void setTarget(double target);
-
             double getI(); // ts not for getting ki btw its i
 
             void clearSumError(); // sum error for integral
             void reset();
 
-            double update(double input); // calculate output 
+            double update(double error); // calculate output 
             double getOutput();
             
         private:
             ControllerSettings& _settings;
 
             std::optional<std::uint32_t> _previous_time = std::nullopt;
-            std::optional<double> _target = std::nullopt;
             // error and output stuff
-            double _error = 0, _previous_error = 0, _sum_error = 0;
+            double _previous_error = 0, _sum_error = 0;
             double _proportional = 0, _integral = 0, _derivative = 0;
             double _output = 0;
     };
