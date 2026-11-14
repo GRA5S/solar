@@ -23,7 +23,7 @@ namespace solar {
     };
     class PID {
         public:
-            PID(ControllerSettings& settings);
+            PID(const ControllerSettings& settings);
 
             double getI(); // ts not for getting ki btw its i
 
@@ -34,7 +34,7 @@ namespace solar {
             double getOutput();
             
         private:
-            ControllerSettings& _settings;
+            const ControllerSettings& _settings;
 
             std::optional<std::uint32_t> _previous_time = std::nullopt;
             // error and output stuff

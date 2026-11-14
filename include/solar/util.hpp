@@ -2,6 +2,7 @@
 #include <vector>
 #include <cmath>
 #include <numbers>
+#include "solar/auto/motion.hpp"
 
 namespace solar {
     inline double average(const std::vector<double>& values) {
@@ -49,4 +50,15 @@ namespace solar {
         return target;
     }
 
+    inline double angleError(double target, double current, AngularDirection direction = AngularDirection::AUTO) {
+        if (direction == AngularDirection::AUTO) return normalizeAngle(target - current);
+        if (direction == AngularDirection::CW)   return std::fmod(target - current + 360, 360);
+        return -std::fmod(current - target + 360, 360);
+    }
+
+    inline double floorMagnitude(double speed, double min) {
+        if (speed < 0 && speed > -min) return -min;
+        else if (speed > 0 && speed < min) return min;
+        else return speed;
+    }
 }

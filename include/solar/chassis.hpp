@@ -3,15 +3,12 @@
 #include "solar/hardware/sensors.hpp"
 #include "solar/auto/pid.hpp"
 #include "solar/hardware/drivetrain.hpp"
+#include "solar/auto/motion.hpp"
 #include <functional>
 #include <memory>
 #include <optional>
 #include <queue>
 namespace solar {
-	enum DriveSide {
-		LEFT,
-		RIGHT
-	};
 	struct Pose {
 		double x = 0.0;
 		double y = 0.0;
@@ -34,7 +31,7 @@ namespace solar {
 
             // motions
             void turnToPoint(double x, double y, int timeout);
-            void turnToHeading(double theta, int timeout);
+            void turnToHeading(double theta, int timeout, TurnToHeadingParams params = {});
             void swingToHeading(double theta, DriveSide lockedside, int timeout);
             void swingToPoint(double x, double y, DriveSide lockedside, int timeout);
             void moveToPose(double x, double y, double theta, int timeout);
@@ -65,8 +62,6 @@ namespace solar {
 			// pid controller stuff
 			ControllerSettings& _linear_controller;
 			ControllerSettings& _angular_controller;
-			PID _linear_pid;
-			PID _angular_pid;
 
 			// tracking stuff
 			Pose _pose{};

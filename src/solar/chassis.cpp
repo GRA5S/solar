@@ -15,9 +15,7 @@ namespace solar {
 		_drivetrain(drivetrain),
 		_sensors(sensors),
 		_linear_controller(linear_controller),
-		_angular_controller(angular_controller),
-		_linear_pid(_linear_controller),
-		_angular_pid(_angular_controller) // make sure to reference the actual member instead of the thingy passed to the constructer because that would go out of scope as soon as the constructor finishes	
+		_angular_controller(angular_controller)
 	{ }
 	void Chassis::init() {
 		_sensors.calibrate();

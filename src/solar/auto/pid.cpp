@@ -8,7 +8,7 @@
 #include <sys/types.h>
 #include <cmath>
 namespace solar {
-    PID::PID(ControllerSettings& settings) : _settings(settings) {}
+    PID::PID(const ControllerSettings& settings) : _settings(settings) {}
     // integral range is range of error where integral applies
     // integral max is the max that the _integral can get to
     // there is both reset and clear sum error because sometimes u js want to get rid of the sum error if I be doing too much but you arent resetting everything yk
