@@ -1,5 +1,7 @@
-#include "drivetrain.hpp"
+#include "solar/hardware/drivetrain.hpp"
 #include "pros/motor_group.hpp"
+#include "solar/auto/motion.hpp"
+#include <optional>
 namespace solar {
     Drivetrain::Drivetrain(
         pros::MotorGroup* left_ports,
@@ -24,9 +26,9 @@ namespace solar {
 		_left_motors->move(left);
         _right_motors->move(right);
 	}
-	void Drivetrain::stop() const {
-		_left_motors->brake();
-		_right_motors->brake();
+	void Drivetrain::stop(std::optional<DriveSide> side) const {
+		if (!side || side == LEFT) _left_motors->brake();
+		if (!side || side == RIGHT) _right_motors->brake();
 	}
 	void Drivetrain::set_brake_mode(pros::motor_brake_mode_e_t mode) const {
 		_left_motors->set_brake_mode_all(mode);

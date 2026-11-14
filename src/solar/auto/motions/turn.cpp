@@ -79,12 +79,15 @@ namespace solar {
 
 
                 //run dt
-                if (params.lockedSide == LEFT)
-                    _drivetrain.move_raw(0, -power);
-                else if (params.lockedSide == RIGHT)  
-                    _drivetrain.move_raw(power, 0);
-                else 
-                    _drivetrain.move_raw(power, -power);
+                if (params.lockedSide == LEFT){
+                    _drivetrain.move_raw(0, -power * params.rightMultiplier);
+                    _drivetrain.stop(LEFT);
+                }
+                else if (params.lockedSide == RIGHT){
+                    _drivetrain.move_raw(power * params.leftMultiplier, 0);
+                    _drivetrain.stop(RIGHT);
+                }
+                else _drivetrain.move_raw(power * params.leftMultiplier, -power * params.rightMultiplier);
                 prev_power = power;
 
                 //delay
