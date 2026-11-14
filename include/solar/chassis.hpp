@@ -8,11 +8,17 @@
 #include <memory>
 #include <optional>
 #include <queue>
+#include <variant>
 namespace solar {
 	struct Pose {
 		double x = 0.0;
 		double y = 0.0;
 		double theta = 0.0;
+	};
+
+	struct Point {
+		double x = 0.0;
+		double y = 0.0;
 	};
 	class Chassis{
 		public:
@@ -30,10 +36,11 @@ namespace solar {
             bool isInMotion() const;
 
             // motions
-            void turnToPoint(double x, double y, int timeout);
-            void turnToHeading(double theta, int timeout, TurnToHeadingParams params = {});
-            void swingToHeading(double theta, DriveSide lockedside, int timeout);
-            void swingToPoint(double x, double y, DriveSide lockedside, int timeout);
+            void turn(std::variant<double, Point> target, int timeout, TurnParams params = {});
+            void turnToPoint(double x, double y, int timeout, TurnParams params = {});
+            void turnToHeading(double theta, int timeout, TurnParams params = {});
+            void swingToHeading(double theta, DriveSide lockedside, int timeout, TurnParams params = {});
+            void swingToPoint(double x, double y, DriveSide lockedside, int timeout, TurnParams params = {});
             void moveToPose(double x, double y, double theta, int timeout);
             void moveToPoint(double x, double y, int timeout);
 

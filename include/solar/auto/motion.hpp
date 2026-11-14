@@ -12,12 +12,15 @@ namespace solar {
         CW,
         CCW
     };
-    struct TurnToHeadingParams {
-        AngularDirection direction = AngularDirection::AUTO;
+    struct MotionParams {
         std::optional<double> maxSpeed = std::nullopt;
         std::optional<double> minSpeed = std::nullopt;
         std::optional<double> earlyExitRange = std::nullopt;
         bool motionChaining = false;
         std::optional<ControllerSettings> controller = std::nullopt;
+    };
+    struct TurnParams : MotionParams {
+        AngularDirection direction = AngularDirection::AUTO;
+        std::optional<DriveSide> lockedSide = std::nullopt;
     };
 }
