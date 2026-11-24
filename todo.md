@@ -6,3 +6,4 @@ im realizing that i should make a todo cuz every time i come back to this i get 
 - api
 - more stuff in hardware/. maybe intake?, lift?, dsr?, toggle? idk
 - make slew range be a config value instead of magic number in motions like turntoheading
+- maybe u shud move point and pose out of chassis but idk where to put it and im lazy as shit

@@ -15,6 +15,7 @@ namespace solar {
         assert(!params.maxSpeed || 0 < *params.maxSpeed && *params.maxSpeed <= 127);
         assert(!params.earlyExitRange || 0 < *params.earlyExitRange);
         assert(!(params.minSpeed && params.maxSpeed) || *params.minSpeed < *params.maxSpeed);
+        assert(get_pose().theta);
         
 
         _newMotion([=, this] {
@@ -22,7 +23,6 @@ namespace solar {
             const double initial_theta = get_pose().theta;
 
             ControllerSettings controller = params.controller ? *params.controller : _angular_controller;
-            assert(!controller.slew || 0 < controller.slew);
 
             PID pid(controller);
             ExitCondition large_exit(

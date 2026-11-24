@@ -1,8 +1,10 @@
 #pragma once
+#include <variant>
 #include <vector>
 #include <cmath>
 #include <numbers>
 #include "solar/auto/motion.hpp"
+#include "solar/chassis.hpp"
 
 namespace solar {
     inline double average(const std::vector<double>& values) {
@@ -60,5 +62,15 @@ namespace solar {
         if (speed < 0 && speed > -min) return -min;
         else if (speed > 0 && speed < min) return min;
         else return speed;
+    }
+
+    template <typename A, typename B>
+    inline double distance(const A& p1, const B& p2) {
+        return std::hypot(p1.x - p2.x, p1.y - p2.y);
+    }
+
+    template <typename A, typename B>
+    inline double angleto(const A& p1, const B& p2) {
+        return radToDeg(std::atan2(p2.x - p1.x, p2.y - p1.y));
     }
 }

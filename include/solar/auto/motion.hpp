@@ -23,4 +23,14 @@ namespace solar {
         double leftMultiplier = 1;
         double rightMultiplier = 1;
     };
+    struct MoveParams {
+        std::optional<double> maxSpeed = std::nullopt;
+        std::optional<double> minSpeed = std::nullopt;
+        std::optional<double> earlyExitRange = std::nullopt;
+        bool motionChaining = false;
+        std::optional<ControllerSettings> linearController = std::nullopt;
+        std::optional<ControllerSettings> angularController = std::nullopt;
+        bool forwards = true;
+        double lead = 0.6;
+    };
 }

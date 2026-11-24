@@ -4,22 +4,27 @@
 #include "solar/auto/pid.hpp"
 #include "solar/hardware/drivetrain.hpp"
 #include "solar/auto/motion.hpp"
+#include <cmath>
 #include <functional>
 #include <memory>
 #include <optional>
 #include <queue>
 #include <variant>
 namespace solar {
+	struct Point {
+		double x = 0.0;
+		double y = 0.0;
+	};
 	struct Pose {
+		Pose(double x, double y, double theta) : x(x), y(y), theta(theta) {}
+		Pose() : x(0.0), y(0.0), theta(0.0) {}
+		// float distanceto(solar::Pose other) const { return std::hypot(x - other.x, y - other.y); }
+		// float distanceto(solar::Point other) const { return std::hypot(x - other.x, y - other.y); }
 		double x = 0.0;
 		double y = 0.0;
 		double theta = 0.0;
 	};
 
-	struct Point {
-		double x = 0.0;
-		double y = 0.0;
-	};
 	class Chassis{
 		public:
 			Chassis(
@@ -41,8 +46,12 @@ namespace solar {
             void turnToHeading(double theta, int timeout, TurnParams params = {});
             void swingToHeading(double theta, DriveSide lockedside, int timeout, TurnParams params = {});
             void swingToPoint(double x, double y, DriveSide lockedside, int timeout, TurnParams params = {});
-            void moveToPose(double x, double y, double theta, int timeout);
-            void moveToPoint(double x, double y, int timeout);
+
+			void moveTo(std::variant<Point, Pose>, int timeout, MoveParams params = {});
+            void moveToPose(double x, double y, double theta, int timeout, MoveParams params = {});
+            void moveToPoint(double x, double y, int timeout, MoveParams params = {});
+			void moveToPose(Pose pose, int timeout, MoveParams params = {});
+            void moveToPoint(Point point, int timeout, MoveParams params = {});
 
 			// pose related funtions
 			Pose get_pose() const;
