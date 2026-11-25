@@ -32,5 +32,6 @@ namespace solar {
         std::optional<ControllerSettings> angularController = std::nullopt;
         bool forwards = true;
         double lead = 0.6;
+        double goal_offset = 0.0;
     };
 }

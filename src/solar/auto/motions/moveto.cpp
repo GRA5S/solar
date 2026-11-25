@@ -55,6 +55,15 @@ namespace solar {
             if (boomerang) target_pose = std::get<Pose>(target);
             else target_point = std::get<Point>(target);
 
+            const double approach = angleto(inital_pose, target_point);
+            const double travel_heading = approach + (params.forwards ? 0 : 180);
+            const Point goal {
+                target_point.x - params.goal_offset * std::sin(degToRad(travel_heading)),
+                target_point.y - params.goal_offset * std::cos(degToRad(travel_heading))
+            };
+            const double plane_heading = approach;
+            std::optional<bool> first_side = std::nullopt;
+
             while (_motion_running) {
                 Pose pose = get_pose();
                 
@@ -63,13 +72,19 @@ namespace solar {
                 if (_motion_progress) *_motion_progress += distance(pose, prev_pose);
                 prev_pose = pose;
 
+                const double fwd = (pose.x - goal.x) * std::sin(degToRad(plane_heading))
+                                 + (pose.y - goal.y) * std::cos(degToRad(plane_heading));
+                const bool side = fwd >= 0;
+                if (!first_side) first_side = side;
+                else if (params.motionChaining && side != *first_side) break;
+
                 const double angularError = angleError(
-                    angleto(pose, target_point) + (params.forwards ? 0 : 180), 
+                    angleto(pose, goal) + (params.forwards ? 0 : 180), 
                     pose.theta
                 );
-                const double linearError = distance(pose, target_point) * cos(degToRad(angleError(pose.theta, angleto(pose, target_point))));
+                const double linearError = distance(pose, goal) * cos(degToRad(angleError(pose.theta, angleto(pose, goal))));
 
-                if (distance(pose, target_point) < 7.5 && close == false) {
+                if (distance(pose, goal) < 7.5 && close == false) {
                     close = true;
                     max_speed = fmax(fabs(prev_linear_out), 60); // magic numbers!!! i love magic numbers  that i steal from lemlib!!!!!!
                     // basically says do not speed up anymore but also dont go below 60 ples
@@ -77,6 +92,7 @@ namespace solar {
                 }
 
                 if (close && (linear_large_exit.update(linearError) || linear_small_exit.update(linearError))) break;
+                if (params.earlyExitRange && distance(pose, goal) <= *params.earlyExitRange) break;
                 if (timeout > 0 && pros::millis() - start >= timeout) break;
 
                 double linear_out = linear_pid.update(linearError);
