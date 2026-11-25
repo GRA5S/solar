@@ -84,7 +84,7 @@ namespace solar {
                 );
                 const double linearError = distance(pose, goal) * cos(degToRad(angleError(pose.theta, angleto(pose, goal))));
 
-                if (distance(pose, goal) < 7.5 && close == false) {
+                if (distance(pose, goal) < 4 && close == false) {
                     close = true;
                     max_speed = fmax(fabs(prev_linear_out), 60); // magic numbers!!! i love magic numbers  that i steal from lemlib!!!!!!
                     // basically says do not speed up anymore but also dont go below 60 ples
