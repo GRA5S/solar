@@ -13,16 +13,12 @@ namespace solar {
     // integral max is the max that the _integral can get to
     // there is both reset and clear sum error because sometimes u js want to get rid of the sum error if I be doing too much but you arent resetting everything yk
     void PID::clearSumError() {_sum_error = 0;}
-    void PID::reset() {_sum_error = 0; _previous_error = 0; _previous_time = std::nullopt;}
+    void PID::reset() {_sum_error = 0; _previous_error = 0;}
     double PID::getI() {return _integral;}
     double PID::getOutput() {return _output;}
     double PID::update(double error){
-        // time stuff
-        const uint32_t now = pros::millis();
-        const uint32_t dt = (_previous_time == std::nullopt) ? 0 : (now - *_previous_time); // this is a ternary operator, if previous time is null then set to 0. if u made it an if else then dt would fall out of scope
-        _previous_time = now;
         // error stuff
-        _sum_error += error * dt / 1000; // idk if it has to be in s instead of ms thats just what lemlib does and i want the pid values to be interchangeable betwwen     
+        _sum_error += error;
         if (_settings.integral_max){
             _sum_error = std::clamp(
                 _sum_error, 
@@ -45,7 +41,7 @@ namespace solar {
         // pid stuff
         _proportional = _settings.kp ? _settings.kp.value() * error : 0.0;
         _integral = _settings.ki ? _settings.ki.value() * _sum_error : 0.0;
-        _derivative = _settings.kd ? _settings.kd.value() * ((dt != 0) ? (derror/(dt/1000.0)) : 0) : 0.0;
+        _derivative = _settings.kd ? _settings.kd.value() * derror : 0.0;
         _output = _proportional + _integral + _derivative;
         _previous_error = error;
         return _output;

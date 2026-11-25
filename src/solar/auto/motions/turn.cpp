@@ -7,6 +7,7 @@
 #include <cassert>
 #include <cmath>
 #include <cstdint>
+#include <cstdio>
 #include <variant>
 #include "solar/auto/motion.hpp"
 namespace solar {
@@ -15,7 +16,6 @@ namespace solar {
         assert(!params.maxSpeed || 0 < *params.maxSpeed && *params.maxSpeed <= 127);
         assert(!params.earlyExitRange || 0 < *params.earlyExitRange);
         assert(!(params.minSpeed && params.maxSpeed) || *params.minSpeed < *params.maxSpeed);
-        assert(get_pose().theta);
         
 
         _newMotion([=, this] {

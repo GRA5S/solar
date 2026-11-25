@@ -15,8 +15,8 @@ namespace solar {
 
     };
     void Drivetrain::arcade(std::int32_t throttle, std::int32_t turn) const {
-		_left_motors->move(throttle - turn);
-		_right_motors->move(throttle + turn);
+		_left_motors->move(throttle + turn);
+		_right_motors->move(throttle - turn);
 	}
 	void Drivetrain::move_raw(int left, int right) const { // lowk kinda useless cuz the other ones dont even have drive curves atm so this is jsut the same thing as tank but ima implement uit ajnywhay for the future
 		_left_motors->move(left);

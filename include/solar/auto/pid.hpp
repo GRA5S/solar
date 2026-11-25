@@ -36,7 +36,6 @@ namespace solar {
         private:
             const ControllerSettings& _settings;
 
-            std::optional<std::uint32_t> _previous_time = std::nullopt;
             // error and output stuff
             double _previous_error = 0, _sum_error = 0;
             double _proportional = 0, _integral = 0, _derivative = 0;
