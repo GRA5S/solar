@@ -33,5 +33,6 @@ namespace solar {
         bool forwards = true;
         double lead = 0.6;
         double goal_offset = 0.0;
+        std::optional<ControllerSettings> lateralController = std::nullopt;
     };
 }

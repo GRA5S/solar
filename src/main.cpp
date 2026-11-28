@@ -8,6 +8,7 @@
 #include "solar/hardware/sensors.hpp"
 #include "solar/hardware/trackingwheel.hpp"
 #include "solar/util.hpp"
+#include <cstdio>
 
 const double DIST_FROM_GOAL = 7.5;
 
@@ -53,11 +54,19 @@ solar::Sensors sensors(
 
 solar::ControllerSettings linear_settings{
     .kp = 8,
-    .kd = 58
+    .kd = 58,
+    .small_error = 0.5,
+    .small_error_timeout = 100,
+    .large_error = 2,
+    .large_error_timeout = 500
 };
 solar::ControllerSettings angular_settings{
     .kp = 2,
-    .kd = 13.875
+    .kd = 13.875,
+    .small_error = 1,
+    .small_error_timeout = 100,
+    .large_error = 5,
+    .large_error_timeout = 500
 };
 
 solar::Chassis chassis(
@@ -71,11 +80,11 @@ void initialize() {
 	drivetrain.set_brake_mode(pros::E_MOTOR_BRAKE_BRAKE);
 	chassis.init();
     pros::Task loggingTask([&]() {
-        while (true) {
-            printf("{\"pose\":{\"x\":%.2f,\"y\":%.2f,\"theta\":%.2f},\"t\":%u}\n",
-                   chassis.get_pose().x, chassis.get_pose().y, chassis.get_pose().theta, pros::millis());
-            pros::delay(100);
-        }
+        // while (true) {
+        //     printf("{\"pose\":{\"x\":%.2f,\"y\":%.2f,\"theta\":%.2f},\"t\":%u}\n",
+        //            chassis.get_pose().x, chassis.get_pose().y, chassis.get_pose().theta, pros::millis());
+        //     pros::delay(100);
+        // }
     });
 }
 void goalReset(double goalx, double goaly) {
@@ -87,22 +96,39 @@ void goalReset(double goalx, double goaly) {
 
     chassis.set_pose(x, y, chassis.get_pose().theta);
 }
+void driveIntoGoal(){
+    chassis.waitUntilDone();
+    drivetrain.tank(90, 90);
+    double lastd = -1;
+    while (true) {
+        double d = sensors.v_tracking_wheel.getDistance();
+        double deltad = d-lastd;
+        printf("{%f} {%f}\n", d, deltad);
+        
+        // printf("{%f}\n", sensors.v_tracking_wheel.readDeltaDistance());
+        if (deltad < 0.001) break;
+        lastd = d;
+        pros::delay(50);
+    }
+}
 void autonomous() {
+    drivetrain.tank(90, 90);
 	chassis.set_pose(-60, -34, 49);
-	drivetrain.tank(32, 32); pros::delay(700);
-	chassis.moveToPoint(-56, -41, 1000, {.minSpeed = 32, .forwards = false});
+    pros::delay(100);
+	driveIntoGoal(); goalReset(-47, -23.5);
+	chassis.moveToPoint(-56, -41, 1000, {.minSpeed = 32, .earlyExitRange = 1, .motionChaining = true, .forwards = false});
 	chassis.turnToPoint(-47, -47, 700, {.minSpeed = 32});
 	chassis.moveToPoint(-47, -47, 1000, {.goal_offset = DIST_FROM_GOAL});
-	chassis.turnToPoint(-47, -23.5, 1000);
-	chassis.moveToPoint(-47, -23.5, 1000, {.goal_offset = DIST_FROM_GOAL});
-	chassis.waitUntilDone();drivetrain.tank(32,32); pros::delay(900); goalReset(-47, -23.5);
+	chassis.turnToPoint(-47, -23.5, 1000, {.minSpeed = 32, .earlyExitRange = 5, .motionChaining = true});
+	chassis.moveToPoint(-47, -23.5, 1000, {.minSpeed = 70, .earlyExitRange = 1, .motionChaining = true, .goal_offset = DIST_FROM_GOAL});
+	driveIntoGoal(); goalReset(-47, -23.5);
 	chassis.moveToPoint(-47, -47, 1000, {.forwards = false});
 	chassis.turnToPoint(-23.5, -23.5, 1000);
 	chassis.moveToPoint(-23.5, -23.5, 1000, {.goal_offset = DIST_FROM_GOAL});
 	chassis.turnToPoint(-47, 23.5, 1000);
-	chassis.moveToPoint(-47, 23.5, 1000, {.goal_offset = DIST_FROM_GOAL});
-	chassis.waitUntilDone();drivetrain.tank(32,32); pros::delay(900); goalReset(-47, -23.5);
-
+	chassis.moveToPoint(-47, 23.5, 1000, {.minSpeed = 70, .earlyExitRange = 1, .motionChaining = true, .goal_offset = DIST_FROM_GOAL});
+	driveIntoGoal(); goalReset(-47, 23.5);
+    
 }
 
 void opcontrol() {
